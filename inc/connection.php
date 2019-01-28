@@ -1,5 +1,5 @@
 <?php
-//create PDO connection and included error handling
+//create PDO connection to SQLite database and included error handling
 
 //try command including code to attempt
 try {

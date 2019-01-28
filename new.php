@@ -1,10 +1,45 @@
-<?php include("inc/header.php"); ?>
+<?php include("inc/header.php");
 
-<!DOCTYPE html>
+
+//function add entries to database
+function add_entry($title, $date, $timeSpent, $learned, $resources) {
+    include 'connection.php';
+
+    $sql = 'INSERT INTO entries(title, date, time_spent, learned, resources) VALUE (?, ?, ?, ?, ?)';
+    //prepared statement
+    try {
+        $results = $db->prepare($sql);
+        $results->bindValue(1, $title, PDO::PARAM_STR);
+        $results->bindValue(2, $date, PDO::PARAM_STR);
+        $results->bindValue(3, $timeSpent, PDO::PARAM_STR);
+        $results->bindValue(4, $learned, PDO::PARAM_STR);
+        $results->bindValue(5, $resources, PDO::PARAM_STR);
+    //catch errors
+    } catch (Exception $e) {
+        echo "Error!: " . $e->getMessage() . "<br />";
+        return false;
+    }
+    return true;
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $title = trim(filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING));
+    $date = trim(filter_input(INPUT_POST, 'date', FILTER_SANITIZE_STRING));
+    $timeSpent = trim(filter_input(INPUT_POST, 'time-spent', FILTER_SANITIZE_STRING));
+    $learned = trim(filter_input(INPUT_POST, 'what-i-learned', FILTER_SANITIZE_STRING));
+    $resources = trim(filter_input(INPUT_POST, 'resources-to-remember', FILTER_SANITIZE_STRING));
+
+  add_entry($title, $date, $timeSpent, $learned, $resources);
+  //var_dump($title);
+}
+
+?>
 <html>
         <section>
             <div class="container">
-                <div class="new-entry">
+                <!--<div class="new-entry">-->
+                <!--create POST method-->
+                <div class="new-entry" method="post" action="new.php">
                     <h2>New Entry</h2>
                     <form>
                         <label for="title"> Title</label>
