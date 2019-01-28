@@ -1,11 +1,27 @@
 <?php include("inc/header.php");
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $title = trim(filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING));
+    $date = trim(filter_input(INPUT_POST, 'date', FILTER_SANITIZE_STRING));
+    $timeSpent = trim(filter_input(INPUT_POST, 'time-spent', FILTER_SANITIZE_STRING));
+    $learned = trim(filter_input(INPUT_POST, 'what-i-learned', FILTER_SANITIZE_STRING));
+    $resources = trim(filter_input(INPUT_POST, 'resources-to-remember', FILTER_SANITIZE_STRING));
+
+    if (add_entry($title, $date, $timeSpent, $learned, $resources)) {
+        header('Location: index.php');
+        exit;
+    } else {
+        $error_message = 'Could not add entry';
+        echo $error_message;
+    }
+}
 
 //function add entries to database
 function add_entry($title, $date, $timeSpent, $learned, $resources) {
-    include 'connection.php';
+    include 'inc/connection.php';
 
-    $sql = 'INSERT INTO entries(title, date, time_spent, learned, resources) VALUE (?, ?, ?, ?, ?)';
+    $sql = 'INSERT INTO entries(title, date, time_spent, learned, resources)
+    VALUES (?, ?, ?, ?, ?)';
     //prepared statement
     try {
         $results = $db->prepare($sql);
@@ -14,6 +30,7 @@ function add_entry($title, $date, $timeSpent, $learned, $resources) {
         $results->bindValue(3, $timeSpent, PDO::PARAM_STR);
         $results->bindValue(4, $learned, PDO::PARAM_STR);
         $results->bindValue(5, $resources, PDO::PARAM_STR);
+        $results->execute();
     //catch errors
     } catch (Exception $e) {
         echo "Error!: " . $e->getMessage() . "<br />";
@@ -22,16 +39,7 @@ function add_entry($title, $date, $timeSpent, $learned, $resources) {
     return true;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $title = trim(filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING));
-    $date = trim(filter_input(INPUT_POST, 'date', FILTER_SANITIZE_STRING));
-    $timeSpent = trim(filter_input(INPUT_POST, 'time-spent', FILTER_SANITIZE_STRING));
-    $learned = trim(filter_input(INPUT_POST, 'what-i-learned', FILTER_SANITIZE_STRING));
-    $resources = trim(filter_input(INPUT_POST, 'resources-to-remember', FILTER_SANITIZE_STRING));
 
-  add_entry($title, $date, $timeSpent, $learned, $resources);
-  //var_dump($title);
-}
 
 ?>
 <html>
@@ -39,9 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="container">
                 <!--<div class="new-entry">-->
                 <!--create POST method-->
-                <div class="new-entry" method="post" action="new.php">
                     <h2>New Entry</h2>
                     <form>
+                        <div class="new-entry" method="post" action="new.php">
                         <label for="title"> Title</label>
                         <input id="title" type="text" name="title"><br>
                         <label for="date">Date</label>
