@@ -21,7 +21,7 @@ $journalEntries = $results->fetchAll(PDO::FETCH_ASSOC);
                     <?php
                         foreach($journalEntries as $journalEntry) {
                             echo '<li><a href="detail.php">' .
-                            $journalEntry[$title] . '</li>';
+                            $journalEntry[$title] . $journalEntry[$date] . '</li>';
                         }
                     ?>
                   <!--
