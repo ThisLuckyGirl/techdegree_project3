@@ -1,13 +1,21 @@
 <?php include("inc/header.php");
 
+//filter id and use it to access project details
+if (isset($_GET['id'])) {
+    list($id, $title, $date, $timeSpent, $learned, $resources)
+    = get_entry(filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT));
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
     $title = trim(filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING));
     $date = trim(filter_input(INPUT_POST, 'date', FILTER_SANITIZE_STRING));
-    $timeSpent = trim(filter_input(INPUT_POST, 'time-spent', FILTER_SANITIZE_STRING));
-    $learned = trim(filter_input(INPUT_POST, 'what-i-learned', FILTER_SANITIZE_STRING));
-    $resources = trim(filter_input(INPUT_POST, 'resources-to-remember', FILTER_SANITIZE_STRING));
+    $timeSpent = trim(filter_input(INPUT_POST, 'timeSpent', FILTER_SANITIZE_STRING));
+    $learned = trim(filter_input(INPUT_POST, 'whatILearned', FILTER_SANITIZE_STRING));
+    $resources = trim(filter_input(INPUT_POST, 'ResourcesToRemember', FILTER_SANITIZE_STRING));
 
     if (add_entry($title, $date, $timeSpent, $learned, $resources)) {
+        //var_dump($title, $date, $timeSpent, $learned, $resources);
         header('Location: index.php');
         exit;
     } else {
@@ -17,11 +25,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 //function add entries to database
-function add_entry($title, $date, $timeSpent, $learned, $resources) {
+function add_entry($title, $date, $timeSpent, $learned, $resources, $id = null) {
     include 'inc/connection.php';
 
+    if ($id) {
+        $sql = 'UPDATE entries SET title = ?, date = ?, time_spent = ?, learned = ?, resources =?
+        WHERE id = ?';
+    } else {
     $sql = 'INSERT INTO entries(title, date, time_spent, learned, resources)
     VALUES (?, ?, ?, ?, ?)';
+    }
+
     //prepared statement
     try {
         $results = $db->prepare($sql);
@@ -30,6 +44,9 @@ function add_entry($title, $date, $timeSpent, $learned, $resources) {
         $results->bindValue(3, $timeSpent, PDO::PARAM_STR);
         $results->bindValue(4, $learned, PDO::PARAM_STR);
         $results->bindValue(5, $resources, PDO::PARAM_STR);
+        if ($id) {
+            $results->bindValue(6, $id, PDO::PARAM_STR);
+        }
         $results->execute();
     //catch errors
     } catch (Exception $e) {
@@ -48,8 +65,8 @@ function add_entry($title, $date, $timeSpent, $learned, $resources) {
                 <!--<div class="new-entry">-->
                 <!--create POST method-->
                     <h2>New Entry</h2>
-                    <form>
-                        <div class="new-entry" method="post" action="new.php">
+                    <form class="new-entry" method="post" action="new.php">
+                        <!--<div class="new-entry" method="post" action="new.php">-->
                         <label for="title"> Title</label>
                         <input id="title" type="text" name="title"><br>
                         <label for="date">Date</label>
