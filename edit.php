@@ -3,7 +3,7 @@ include("inc/connection.php");
 
 if(isset($_GET['id'])) {
     $id = filter_input(INPUT_GET,'id',FILTER_SANITIZE_NUMBER_INT);
-    $entry = get_entry;
+    $entry = get_entry($id);
 }
 
 //prepared statement to filter input

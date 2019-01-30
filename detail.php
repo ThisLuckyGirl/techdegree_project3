@@ -48,7 +48,7 @@ include("inc/header.php");
         </div>
     </div>
     <div class="edit">
-        <p><a href="edit.php?id=<?php echo $details['id']; ?>" Edit Entry</a></p>
+        <p><a href="edit.php?id=<?php echo $details['id']; ?>"> Edit Entry</a></p>
     </div>
 </section>
 
