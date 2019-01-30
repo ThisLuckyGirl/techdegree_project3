@@ -1,7 +1,7 @@
-<?php include("inc/header.php");
+<?php
 include("inc/connection.php");
 
-//prepared statment
+
 //query database and catch errors
 try {
     $results = $db->query('SELECT * FROM entries');
@@ -13,43 +13,43 @@ try {
 // store results to variable
 $journalEntries = $results->fetchAll(PDO::FETCH_ASSOC);
 
+include("inc/header.php");
 ?>
 
-<!DOCTYPE html>
-<html>
-        <section>
-            <div class="container">
-                <div class="entry-list">
-                      <?php
-                        foreach($journalEntries as $journalEntry) {
-                             echo '<article><h2><a href="detail.php">' .
-                             $journalEntry['title'] . '</a></h2>' .
-                              '<time datetime="2016-01-31">' .
-                              $journalEntry['date'] . '</time></article>';
-                               }
-                        ?>
+
+<section>
+    <div class="container">
+        <div class="entry-list">
+              <?php
+                foreach($journalEntries as $journalEntry) {
+                     echo '<article><h2><a href="detail.php?id='.$journalEntry['id'].'">' .
+                     $journalEntry['title'] . '</a></h2>' .
+                      '<time datetime="2016-01-31">' .
+                      $journalEntry['date'] . '</time></article>';
+                       }
+                ?>
 
 
-                    <!--
-                    <article>
-                        <h2><a href="detail.php">The best day I’ve ever had</a></h2>
-                        <time datetime="2016-01-31">January 31, 2016</time>
-                    </article>
-                    <article>
-                        <h2><a href="detail_2.php">The absolute worst day I’ve ever had</a></h2>
-                        <time datetime="2016-01-31">January 31, 2016</time>
-                    </article>
-                    <article>
-                        <h2><a href="detail_3.php">That time at the mall</a></h2>
-                        <time datetime="2016-01-31">January 31, 2016</time>
-                    </article>
-                    <article>
-                        <h2><a href="detail_4.php">Dude, where’s my car?</a></h2>
-                        <time datetime="2016-01-31">January 31, 2016</time>
-                    </article>
-                  -->
-                </div>
-            </div>
-        </section>
-</html>
+            <!--
+            <article>
+                <h2><a href="detail.php">The best day I’ve ever had</a></h2>
+                <time datetime="2016-01-31">January 31, 2016</time>
+            </article>
+            <article>
+                <h2><a href="detail_2.php">The absolute worst day I’ve ever had</a></h2>
+                <time datetime="2016-01-31">January 31, 2016</time>
+            </article>
+            <article>
+                <h2><a href="detail_3.php">That time at the mall</a></h2>
+                <time datetime="2016-01-31">January 31, 2016</time>
+            </article>
+            <article>
+                <h2><a href="detail_4.php">Dude, where’s my car?</a></h2>
+                <time datetime="2016-01-31">January 31, 2016</time>
+            </article>
+          -->
+        </div>
+    </div>
+</section>
+
 <?php include("inc/footer.php"); ?>

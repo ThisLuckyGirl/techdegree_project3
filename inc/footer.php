@@ -1,4 +1,4 @@
-<html>
+
 <footer>
     <div>
         &copy; MyJournal
