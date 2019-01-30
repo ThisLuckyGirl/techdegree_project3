@@ -1,7 +1,9 @@
 <?php
 include("inc/connection.php");
+
 if(isset($_GET['id'])) {
     $id = filter_input(INPUT_GET,'id',FILTER_SANITIZE_NUMBER_INT);
+    $entry = get_entry;
 }
 
 //prepared statement to filter input
@@ -32,7 +34,7 @@ include("inc/header.php");
             <h2>Edit Entry</h2>
             <form class="edit-entry" method="post" action="edit.php">
                 <label for="title"> Title</label>
-                <input id="title" type="text" name="title"><br>
+                <input id="title" type="text" name="title" value="<?php echo $entry['title'];?>"><br>
                 <label for="date">Date</label>
                 <input id="date" type="date" name="date"><br>
                 <label for="time-spent"> Time Spent</label>
