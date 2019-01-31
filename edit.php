@@ -1,12 +1,12 @@
 <?php
-include("inc/connection.php");
+//include("inc/connection.php");
 
 if(isset($_GET['id'])) {
     $id = filter_input(INPUT_GET,'id',FILTER_SANITIZE_NUMBER_INT);
     $entry = get_entry($id);
 }
 
-//prepared statement to filter input
+//prepared statement to filter input to be displayed
 function get_entry($id){
 include("inc/connection.php");
 
@@ -24,6 +24,54 @@ $sql = 'SELECT * FROM entries WHERE id = ?';
 //$details = $results->fetch(PDO::FETCH_ASSOC);
 
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+    $title = trim(filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING));
+    $date = trim(filter_input(INPUT_POST, 'date', FILTER_SANITIZE_STRING));
+    $timeSpent = trim(filter_input(INPUT_POST, 'timeSpent', FILTER_SANITIZE_STRING));
+    $learned = trim(filter_input(INPUT_POST, 'whatILearned', FILTER_SANITIZE_STRING));
+    $resources = trim(filter_input(INPUT_POST, 'ResourcesToRemember', FILTER_SANITIZE_STRING));
+
+    if (update_entry($title, $date, $timeSpent, $learned, $resources)) {
+        //var_dump($title, $date, $timeSpent, $learned, $resources);
+        header('Location: index.php');
+        exit;
+    } else {
+        $error_message = 'Could not update entry';
+        echo $error_message;
+    }
+}
+
+function update_entry($title, $date, $timeSpent, $learned, $resources) {
+    include 'inc/connection.php';
+
+    if (isset($id)) {
+        $sql = 'UPDATE * FROM entries SET title = ?, date = ?, time_spent = ?, learned = ?, resources =?
+        WHERE id = ?';
+    } else {
+        $sql = 'INSERT INTO entries(title, date, time_spent, learned, resources)
+        VALUES (?, ?, ?, ?, ?)';
+    }
+
+    //prepared statement
+    try {
+        $results = $db->prepare($sql);
+        $results->bindValue(1, $title, PDO::PARAM_STR);
+        $results->bindValue(2, $date, PDO::PARAM_STR);
+        $results->bindValue(3, $timeSpent, PDO::PARAM_STR);
+        $results->bindValue(4, $learned, PDO::PARAM_STR);
+        $results->bindValue(5, $resources, PDO::PARAM_STR);
+        if ($id) {
+            $results->bindValue(6, $id, PDO::PARAM_STR);
+        }
+        $results->execute();
+    //catch errors
+    } catch (Exception $e) {
+        echo "Error!: " . $e->getMessage() . "<br />";
+        return false;
+    }
+    return true;
+}
 include("inc/header.php");
 ?>
 
@@ -34,15 +82,15 @@ include("inc/header.php");
             <h2>Edit Entry</h2>
             <form class="edit-entry" method="post" action="edit.php">
                 <label for="title"> Title</label>
-                <input id="title" type="text" name="title" value="<?php echo $entry['title'];?>"><br>
+                <input id="title" type="text" name="title" value="<?php if(isset($entry['title'])) { echo $entry['title'];}?>"><br>
                 <label for="date">Date</label>
-                <input id="date" type="date" name="date"><br>
+                <input id="date" type="date" name="date" value="<?php if(isset($entry['date'])) { echo $entry['date'];}?>"><br>
                 <label for="time-spent"> Time Spent</label>
-                <input id="time-spent" type="text" name="timeSpent"><br>
+                <input id="time-spent" type="text" name="timeSpent" value="<?php if(isset($entry['time_spent'])) { echo $entry['time_spent'];}?>"><br>
                 <label for="what-i-learned">What I Learned</label>
-                <textarea id="what-i-learned" rows="5" name="whatILearned"></textarea>
+                <textarea id="what-i-learned" rows="5" name="whatILearned"><?php if(isset($entry['learned'])) { echo $entry['learned'];}?></textarea>
                 <label for="resources-to-remember">Resources to Remember</label>
-                <textarea id="resources-to-remember" rows="5" name="ResourcesToRemember"></textarea>
+                <textarea id="resources-to-remember" rows="5" name="ResourcesToRemember"><?php if(isset($entry['resources'])) { echo $entry['resources'];}?></textarea>
                 <?php
                 if (!empty($id)) {
                     echo '<input type="hidden" name="id" value"' . $id . '" />';
