@@ -6,6 +6,13 @@ if(isset($_GET['id'])) {
     $entry = get_entry($id);
 }
 
+if(isset($POST['delete'])) {
+    if (delete_entry(filter_input(INPUT_POST, 'delete', FILTER_SANITIZE_NUMBER_INT))) {
+        header('location: index.php');
+        exit;
+    }
+}
+
 //prepared statement to filter input to be displayed
 function get_entry($id){
 include("inc/connection.php");
@@ -32,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $learned = trim(filter_input(INPUT_POST, 'whatILearned', FILTER_SANITIZE_STRING));
     $resources = trim(filter_input(INPUT_POST, 'ResourcesToRemember', FILTER_SANITIZE_STRING));
 
-    if (update_entry($title, $date, $timeSpent, $learned, $resources)) {
+    if (update_entry($id, $title, $date, $timeSpent, $learned, $resources)) {
         //var_dump($title, $date, $timeSpent, $learned, $resources);
         header('Location: index.php');
         exit;
@@ -42,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-function update_entry($title, $date, $timeSpent, $learned, $resources) {
+function update_entry($id, $title, $date, $timeSpent, $learned, $resources) {
     include 'inc/connection.php';
 
     if (isset($id)) {
@@ -72,6 +79,25 @@ function update_entry($title, $date, $timeSpent, $learned, $resources) {
     }
     return true;
 }
+
+function delete_entry($id) {
+    include 'inc/connection.php';
+
+    $sql = 'DELETE id, title, date, time_spent, learned, resources
+            FROM entries WHERE id = "$id"';
+
+    try {
+        $results = $db->prepare($sql);
+        $results->bindValue(1, $id, PDO::PARAM_INT);
+        $results->execute();
+    } catch (Exception $e) {
+      echo "Error!: " . $e->getMessage() . "<br />";
+      return false;
+    }
+    return true;
+}
+
+
 include("inc/header.php");
 ?>
 
@@ -98,6 +124,12 @@ include("inc/header.php");
                  ?>
                 <input type="submit" value="Edit Entry" class="button">
                 <a href="#" class="button button-secondary">Cancel</a>
+                <?php
+                    echo "<form method='post' action='edit.php'>\n";
+                    echo "<input type='hidden' value'". $id . "' name='delete'/>\n";
+                    echo "<input type='submit' class='button' value='Delete' />\n";
+                ?>
+
             </form>
         </div>
     </div>
