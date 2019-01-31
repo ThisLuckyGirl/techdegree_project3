@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $learned = trim(filter_input(INPUT_POST, 'whatILearned', FILTER_SANITIZE_STRING));
     $resources = trim(filter_input(INPUT_POST, 'ResourcesToRemember', FILTER_SANITIZE_STRING));
 
-    if (update_entry($id, $title, $date, $timeSpent, $learned, $resources)) {
+    if (update_entry($title, $date, $timeSpent, $learned, $resources, $id)) {
         //var_dump($title, $date, $timeSpent, $learned, $resources);
         header('Location: index.php');
         exit;
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-function update_entry($id, $title, $date, $timeSpent, $learned, $resources) {
+function update_entry($title, $date, $timeSpent, $learned, $resources, $id) {
     include 'inc/connection.php';
 
     if (isset($id)) {
@@ -84,7 +84,7 @@ function delete_entry($id) {
     include 'inc/connection.php';
 
     $sql = 'DELETE id, title, date, time_spent, learned, resources
-            FROM entries WHERE id = "$id"';
+            FROM entries WHERE id = ?';
 
     try {
         $results = $db->prepare($sql);
