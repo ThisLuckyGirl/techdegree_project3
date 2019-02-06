@@ -53,7 +53,7 @@ function update_entry($title, $date, $timeSpent, $learned, $resources, $id) {
     include 'inc/connection.php';
 
     if (isset($id)) {
-        $sql = 'UPDATE * FROM entries SET title = ?, date = ?, time_spent = ?, learned = ?, resources =?
+        $sql = 'UPDATE entries SET title = ?, date = ?, time_spent = ?, learned = ?, resources =?
         WHERE id = ?';
     } else {
         $sql = 'INSERT INTO entries(title, date, time_spent, learned, resources)
@@ -83,8 +83,10 @@ function update_entry($title, $date, $timeSpent, $learned, $resources, $id) {
 function delete_entry($id) {
     include 'inc/connection.php';
 
-    $sql = 'DELETE id, title, date, time_spent, learned, resources
-            FROM entries WHERE id = ?';
+//    $sql = 'DELETE id, title, date, time_spent, learned, resources
+//            FROM entries WHERE id = ?';
+
+    $sql = 'DELETE * FROM entries WHERE id = ?';
 
     try {
         $results = $db->prepare($sql);
@@ -119,14 +121,14 @@ include("inc/header.php");
                 <textarea id="resources-to-remember" rows="5" name="ResourcesToRemember"><?php if(isset($entry['resources'])) { echo $entry['resources'];}?></textarea>
                 <?php
                 if (!empty($id)) {
-                    echo '<input type="hidden" name="id" value"' . $id . '" />';
+                    echo '<input type="hidden" name="id" value="' . $id . '" />';
                 }
                  ?>
                 <input type="submit" value="Edit Entry" class="button">
                 <a href="#" class="button button-secondary">Cancel</a>
                 <?php
                     echo "<form method='post' action='edit.php'>\n";
-                    echo "<input type='hidden' value'". $id . "' name='delete'/>\n";
+                    echo "<input type='hidden' value='". $id . "' name='delete'/>\n";
                     echo "<input type='submit' class='button' value='Delete' />\n";
                 ?>
 

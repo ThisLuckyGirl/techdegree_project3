@@ -4,7 +4,7 @@ include("inc/connection.php");
 
 //query database and catch errors
 try {
-    $results = $db->query('SELECT * FROM entries');
+    $results = $db->query('SELECT * FROM entries ORDER BY date ASC');
 } catch(Exception $e) {
     echo $e->getMessage();
     die();
@@ -24,7 +24,7 @@ include("inc/header.php");
                 foreach($journalEntries as $journalEntry) {
                      echo '<article><h2><a href="detail.php?id='.$journalEntry['id'].'">' .
                      $journalEntry['title'] . '</a></h2>' .
-                      '<time datetime="2016-01-31">' .
+                      '<time datetime="01-31-2018">' .
                       $journalEntry['date'] . '</time></article>';
                        }
                 ?>
