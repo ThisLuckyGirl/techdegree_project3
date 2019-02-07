@@ -6,12 +6,12 @@ if(isset($_GET['id'])) {
     $entry = get_entry($id);
 }
 
-if(isset($POST['delete'])) {
-    if (delete_entry(filter_input(INPUT_POST, 'delete', FILTER_SANITIZE_NUMBER_INT))) {
-        header('location: index.php');
-        exit;
-    }
+if(isset($_POST['delete'])) {
+    delete_entry(filter_input(INPUT_POST, 'delete', FILTER_SANITIZE_NUMBER_INT));
+    header('location: index.php');
+    exit;
 }
+
 
 //prepared statement to filter input to be displayed
 function get_entry($id){
@@ -83,10 +83,10 @@ function update_entry($title, $date, $timeSpent, $learned, $resources, $id) {
 function delete_entry($id) {
     include 'inc/connection.php';
 
-//    $sql = 'DELETE id, title, date, time_spent, learned, resources
-//            FROM entries WHERE id = ?';
+    //$sql = 'DELETE id, title, date, time_spent, learned, resources
+            //FROM entries WHERE id = ?';
 
-    $sql = 'DELETE * FROM entries WHERE id = ?';
+    $sql = 'DELETE FROM entries WHERE id = ?';
 
     try {
         $results = $db->prepare($sql);
@@ -125,12 +125,11 @@ include("inc/header.php");
                 }
                  ?>
                 <input type="submit" value="Edit Entry" class="button">
-                <a href="#" class="button button-secondary">Cancel</a>
-                <?php
-                    echo "<form method='post' action='edit.php'>\n";
-                    echo "<input type='hidden' value='". $id . "' name='delete'/>\n";
-                    echo "<input type='submit' class='button' value='Delete' />\n";
-                ?>
+                <a href="index.php" class="button button-secondary">Cancel</a>
+
+                <input type="hidden" value="<?php echo $entry['id']; ?>" name="delete">
+                <input type="submit" class="button" value="Delete">
+
 
             </form>
         </div>

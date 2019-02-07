@@ -4,7 +4,7 @@ include("inc/connection.php");
 
 //query database and catch errors
 try {
-    $results = $db->query('SELECT * FROM entries ORDER BY date ASC');
+    $results = $db->query('SELECT * FROM entries ORDER BY date DESC');
 } catch(Exception $e) {
     echo $e->getMessage();
     die();
