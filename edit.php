@@ -57,7 +57,7 @@ function update_entry($title, $date, $timeSpent, $learned, $resources, $id) {
     include 'inc/connection.php';
 
     //if (isset($id)) {
-        $sql = 'UPDATE entries SET title = ?, date = ?, time_spent = ?, learned = ?, resources =
+        $sql = 'UPDATE entries SET title = ?, date = ?, time_spent = ?, learned = ?, resources = ?
         WHERE id = ?';
     //} else {
       //  $sql = 'INSERT INTO entries(title, date, time_spent, learned, resources)
