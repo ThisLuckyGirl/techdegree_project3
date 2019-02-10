@@ -40,9 +40,9 @@ include("inc/header.php");
                 </div>
                 <div class="entry">
                     <h3>Resources to Remember:</h3>
-                    <ul>
-                        <li><a href=""><?php echo $details['resources']; ?></a></li>
-                    </ul>
+                    <p>
+                    <?php echo $details['resources']; ?>
+                    </p>
                 </div>
             </article>
         </div>
