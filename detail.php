@@ -29,7 +29,7 @@ include("inc/header.php");
         <div class="entry-list single">
             <article>
                 <h1><?php echo $details['title']; ?></h1>
-                <time datetime="01-31-2018"><?php echo $details['date']; ?></time>
+                <time datetime="2016-01-31"><?php echo $details['date']; ?></time>
                 <div class="entry">
                     <h3>Time Spent: </h3>
                     <p><?php echo $details['time_spent']; ?></p>

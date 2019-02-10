@@ -6,12 +6,6 @@ if(isset($_GET['id'])) {
     $entry = get_entry($id);
 }
 
-if(isset($_POST['delete'])) {
-    delete_entry(filter_input(INPUT_POST, 'delete', FILTER_SANITIZE_NUMBER_INT));
-    header('location: index.php');
-    exit;
-}
-
 
 //prepared statement to filter input to be displayed
 function get_entry($id){
@@ -31,6 +25,7 @@ $sql = 'SELECT * FROM entries WHERE id = ?';
 //$details = $results->fetch(PDO::FETCH_ASSOC);
 
 
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
     $title = trim(filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING));
@@ -39,26 +34,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $learned = trim(filter_input(INPUT_POST, 'whatILearned', FILTER_SANITIZE_STRING));
     $resources = trim(filter_input(INPUT_POST, 'ResourcesToRemember', FILTER_SANITIZE_STRING));
 
-    if (update_entry($title, $date, $timeSpent, $learned, $resources, $id)) {
-        //var_dump($title, $date, $timeSpent, $learned, $resources);
-        header('Location: index.php');
-        exit;
-    } else {
-        $error_message = 'Could not update entry';
-        echo $error_message;
+
+    if ($_POST['edit']) {
+        update_entry($title, $date, $timeSpent, $learned, $resources, $id);
+            //var_dump($title, $date, $timeSpent, $learned, $resources);
+            header('location: index.php');
+            exit;
+      //  } else {
+          //  $error_message = 'Could not update entry';
+      //      echo $error_message;
+      //  }
+    } else if ($_POST['delete']) {
+          delete_entry(filter_input(INPUT_POST, 'delete', FILTER_SANITIZE_NUMBER_INT));
+          header('location: index.php');
+          exit;
     }
 }
+
+
 
 function update_entry($title, $date, $timeSpent, $learned, $resources, $id) {
     include 'inc/connection.php';
 
-    if (isset($id)) {
-        $sql = 'UPDATE entries SET title = ?, date = ?, time_spent = ?, learned = ?, resources =?
+    //if (isset($id)) {
+        $sql = 'UPDATE entries SET title = ?, date = ?, time_spent = ?, learned = ?, resources =
         WHERE id = ?';
-    } else {
-        $sql = 'INSERT INTO entries(title, date, time_spent, learned, resources)
-        VALUES (?, ?, ?, ?, ?)';
-    }
+    //} else {
+      //  $sql = 'INSERT INTO entries(title, date, time_spent, learned, resources)
+      //  VALUES (?, ?, ?, ?, ?)';
+    //}
 
     //prepared statement
     try {
@@ -68,6 +72,7 @@ function update_entry($title, $date, $timeSpent, $learned, $resources, $id) {
         $results->bindValue(3, $timeSpent, PDO::PARAM_STR);
         $results->bindValue(4, $learned, PDO::PARAM_STR);
         $results->bindValue(5, $resources, PDO::PARAM_STR);
+
         if ($id) {
             $results->bindValue(6, $id, PDO::PARAM_STR);
         }
@@ -103,7 +108,6 @@ function delete_entry($id) {
 include("inc/header.php");
 ?>
 
-
 <section>
     <div class="container">
         <div class="edit-entry">
@@ -124,7 +128,7 @@ include("inc/header.php");
                     echo '<input type="hidden" name="id" value="' . $id . '" />';
                 }
                  ?>
-                <input type="submit" value="Edit Entry" class="button">
+                <input type="submit" value="Edit Entry" class="button" name="edit">
                 <a href="index.php" class="button button-secondary">Cancel</a>
 
                 <input type="hidden" value="<?php echo $entry['id']; ?>" name="delete">

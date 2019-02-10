@@ -1,11 +1,9 @@
 <?php
-
 //filter id and use it to access project details
 if (isset($_GET['id'])) {
     list($id, $title, $date, $timeSpent, $learned, $resources)
     = get_entry(filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT));
 }
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
     $title = trim(filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING));
@@ -13,21 +11,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $timeSpent = trim(filter_input(INPUT_POST, 'timeSpent', FILTER_SANITIZE_STRING));
     $learned = trim(filter_input(INPUT_POST, 'whatILearned', FILTER_SANITIZE_STRING));
     $resources = trim(filter_input(INPUT_POST, 'ResourcesToRemember', FILTER_SANITIZE_STRING));
-
     if (add_entry($title, $date, $timeSpent, $learned, $resources)) {
         //var_dump($title, $date, $timeSpent, $learned, $resources);
-        header('Location: index.php');
+        header('location: index.php');
         exit;
     } else {
         $error_message = 'Could not add entry';
         echo $error_message;
     }
 }
-
 //function add entries to database
 function add_entry($title, $date, $timeSpent, $learned, $resources, $id = null) {
     include 'inc/connection.php';
-
     if ($id) {
         $sql = 'UPDATE entries SET title = ?, date = ?, time_spent = ?, learned = ?, resources =?
         WHERE id = ?';
@@ -35,7 +30,6 @@ function add_entry($title, $date, $timeSpent, $learned, $resources, $id = null) 
     $sql = 'INSERT INTO entries(title, date, time_spent, learned, resources)
     VALUES (?, ?, ?, ?, ?)';
     }
-
     //prepared statement
     try {
         $results = $db->prepare($sql);
@@ -55,8 +49,6 @@ function add_entry($title, $date, $timeSpent, $learned, $resources, $id = null) 
     }
     return true;
 }
-
-
 include("inc/header.php");
 ?>
 
