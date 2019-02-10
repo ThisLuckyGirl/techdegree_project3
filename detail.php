@@ -1,21 +1,24 @@
 <?php
-//include("inc/connection.php");
+//page displays individual journal entry details
+//includes link to edit.php, which allows user to edit or delete entry
 
+//filter GET data and set to id variable
 if(isset($_GET['id'])) {
     $id = filter_input(INPUT_GET,'id',FILTER_SANITIZE_NUMBER_INT);
 }
 
-//prepared statement to filter input
+//include connection to database
 include("inc/connection.php");
 
-    try {
-        $results = $db->prepare('SELECT * FROM entries WHERE id = ?');
-        $results->bindParam(1, $id, PDO::PARAM_INT);
-        $results->execute();
-    } catch (Exception $e) {
-        echo "Error!: " . $e->getMessage() . "</br>";
-        return false;
-    }
+//prepared statement - prepare data, bind, and execute
+try {
+    $results = $db->prepare('SELECT * FROM entries WHERE id = ?');
+    $results->bindParam(1, $id, PDO::PARAM_INT);
+    $results->execute();
+} catch (Exception $e) {
+    echo "Error!: " . $e->getMessage() . "</br>";
+    return false;
+}
 
 $details = $results->fetch(PDO::FETCH_ASSOC);
 
@@ -28,6 +31,7 @@ include("inc/header.php");
     <div class="container">
         <div class="entry-list single">
             <article>
+                <!--display all entry details-->
                 <h1><?php echo $details['title']; ?></h1>
                 <time datetime="2016-01-31"><?php echo $details['date']; ?></time>
                 <div class="entry">

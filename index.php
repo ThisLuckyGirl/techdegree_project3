@@ -1,6 +1,9 @@
 <?php
-include("inc/connection.php");
+//page displays a list of journal entries - includes title and date
+//entries are displayed descending by entry date
 
+//include connection.php to connect to database
+include("inc/connection.php");
 
 //query database and catch errors
 try {
@@ -21,6 +24,7 @@ include("inc/header.php");
     <div class="container">
         <div class="entry-list">
               <?php
+                //display journal entry titles and dates
                 foreach($journalEntries as $journalEntry) {
                      echo '<article><h2><a href="detail.php?id='.$journalEntry['id'].'">' .
                      $journalEntry['title'] . '</a></h2>' .
@@ -28,26 +32,6 @@ include("inc/header.php");
                       $journalEntry['date'] . '</time></article>';
                        }
                 ?>
-
-
-            <!--
-            <article>
-                <h2><a href="detail.php">The best day I’ve ever had</a></h2>
-                <time datetime="2016-01-31">January 31, 2016</time>
-            </article>
-            <article>
-                <h2><a href="detail_2.php">The absolute worst day I’ve ever had</a></h2>
-                <time datetime="2016-01-31">January 31, 2016</time>
-            </article>
-            <article>
-                <h2><a href="detail_3.php">That time at the mall</a></h2>
-                <time datetime="2016-01-31">January 31, 2016</time>
-            </article>
-            <article>
-                <h2><a href="detail_4.php">Dude, where’s my car?</a></h2>
-                <time datetime="2016-01-31">January 31, 2016</time>
-            </article>
-          -->
         </div>
     </div>
 </section>

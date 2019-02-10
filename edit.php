@@ -1,16 +1,16 @@
 <?php
-//include("inc/connection.php");
+//page allows user to edit or delete existing journal entries
 
+//filter id and use it to access project details
 if(isset($_GET['id'])) {
     $id = filter_input(INPUT_GET,'id',FILTER_SANITIZE_NUMBER_INT);
     $entry = get_entry($id);
 }
 
-
-//prepared statement to filter input to be displayed
+//function to access journal entry by entry id
 function get_entry($id){
 include("inc/connection.php");
-
+//prepared statement to prepare and bind data
 $sql = 'SELECT * FROM entries WHERE id = ?';
     try {
         $results = $db->prepare($sql);
@@ -22,10 +22,8 @@ $sql = 'SELECT * FROM entries WHERE id = ?';
     }
     return $results->fetch();
   }
-//$details = $results->fetch(PDO::FETCH_ASSOC);
 
-
-
+//if statement to filter POST data and call either edit or delete function
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
     $title = trim(filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING));
@@ -34,16 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $learned = trim(filter_input(INPUT_POST, 'whatILearned', FILTER_SANITIZE_STRING));
     $resources = trim(filter_input(INPUT_POST, 'ResourcesToRemember', FILTER_SANITIZE_STRING));
 
-
+//call edit function and redirect to index.php
     if ($_POST['edit']) {
         update_entry($title, $date, $timeSpent, $learned, $resources, $id);
-            //var_dump($title, $date, $timeSpent, $learned, $resources);
             header('location: index.php');
             exit;
-      //  } else {
-          //  $error_message = 'Could not update entry';
-      //      echo $error_message;
-      //  }
+//call delete function and redirect to index.php
     } else if ($_POST['delete']) {
           delete_entry(filter_input(INPUT_POST, 'delete', FILTER_SANITIZE_NUMBER_INT));
           header('location: index.php');
@@ -52,19 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 
-
+//edit(update) function
 function update_entry($title, $date, $timeSpent, $learned, $resources, $id) {
     include 'inc/connection.php';
 
-    //if (isset($id)) {
         $sql = 'UPDATE entries SET title = ?, date = ?, time_spent = ?, learned = ?, resources = ?
         WHERE id = ?';
-    //} else {
-      //  $sql = 'INSERT INTO entries(title, date, time_spent, learned, resources)
-      //  VALUES (?, ?, ?, ?, ?)';
-    //}
 
-    //prepared statement
+    //prepared statement - bind all variables
     try {
         $results = $db->prepare($sql);
         $results->bindValue(1, $title, PDO::PARAM_STR);
@@ -76,8 +65,9 @@ function update_entry($title, $date, $timeSpent, $learned, $resources, $id) {
         if ($id) {
             $results->bindValue(6, $id, PDO::PARAM_STR);
         }
+    //prepared statement - execute
         $results->execute();
-    //catch errors
+    //prepared statement - catch errors
     } catch (Exception $e) {
         echo "Error!: " . $e->getMessage() . "<br />";
         return false;
@@ -85,18 +75,19 @@ function update_entry($title, $date, $timeSpent, $learned, $resources, $id) {
     return true;
 }
 
+//function to delete entries
 function delete_entry($id) {
     include 'inc/connection.php';
 
-    //$sql = 'DELETE id, title, date, time_spent, learned, resources
-            //FROM entries WHERE id = ?';
-
     $sql = 'DELETE FROM entries WHERE id = ?';
 
+    //prepared statement
     try {
+    //prepared statement - bind id variable and execute
         $results = $db->prepare($sql);
         $results->bindValue(1, $id, PDO::PARAM_INT);
         $results->execute();
+    //prepared statement - catch errors
     } catch (Exception $e) {
       echo "Error!: " . $e->getMessage() . "<br />";
       return false;

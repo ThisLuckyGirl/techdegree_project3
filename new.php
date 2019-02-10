@@ -1,9 +1,8 @@
 <?php
-//filter id and use it to access project details
-if (isset($_GET['id'])) {
-    list($id, $title, $date, $timeSpent, $learned, $resources)
-    = get_entry(filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT));
-}
+//page will add new entries to journal - includes textboxes to create entry title,
+// date, time spent, what was learned, and resources to remember
+
+// filter POST data, call function to add data to db, and redirect to home page/index page
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
     $title = trim(filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING));
@@ -11,25 +10,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $timeSpent = trim(filter_input(INPUT_POST, 'timeSpent', FILTER_SANITIZE_STRING));
     $learned = trim(filter_input(INPUT_POST, 'whatILearned', FILTER_SANITIZE_STRING));
     $resources = trim(filter_input(INPUT_POST, 'ResourcesToRemember', FILTER_SANITIZE_STRING));
+    //call add entry function and redirect to index.php
     if (add_entry($title, $date, $timeSpent, $learned, $resources)) {
-        //var_dump($title, $date, $timeSpent, $learned, $resources);
         header('location: index.php');
         exit;
+    //error message if add entry fails
     } else {
         $error_message = 'Could not add entry';
         echo $error_message;
     }
 }
-//function add entries to database
+
+//function to add new entries to database
 function add_entry($title, $date, $timeSpent, $learned, $resources, $id = null) {
     include 'inc/connection.php';
-    if ($id) {
-        $sql = 'UPDATE entries SET title = ?, date = ?, time_spent = ?, learned = ?, resources =?
-        WHERE id = ?';
-    } else {
-    $sql = 'INSERT INTO entries(title, date, time_spent, learned, resources)
+  $sql = 'INSERT INTO entries(title, date, time_spent, learned, resources)
     VALUES (?, ?, ?, ?, ?)';
-    }
+
     //prepared statement
     try {
         $results = $db->prepare($sql);
@@ -54,11 +51,9 @@ include("inc/header.php");
 
 <section>
     <div class="container">
-        <!--<div class="new-entry">-->
-        <!--create POST method-->
+        <!--changed class from div to form and created POST method to post data-->
             <h2>New Entry</h2>
             <form class="new-entry" method="post" action="new.php">
-                <!--<div class="new-entry" method="post" action="new.php">-->
                 <label for="title"> Title</label>
                 <input id="title" type="text" name="title"><br>
                 <label for="date">Date</label>

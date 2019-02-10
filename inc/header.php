@@ -1,3 +1,6 @@
+<!--HTML header to be included on each journal page-->
+<!--includes links to CSS style page-->
+
 <html>
     <head>
         <meta charset="utf-8">
