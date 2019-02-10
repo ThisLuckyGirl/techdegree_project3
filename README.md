@@ -1,6 +1,8 @@
 # techdegree_project3
 Unit 3 project for TalentPath PHP cohort
 
+Build a Personal Learning Journal
+
 Create a local web interface of a learning journal. The main (index) page will list journal entry titles and dates. 
 Each journal entry title will link to a detail page that displays the title, date, time spent, what you learned, and 
 resources to remember. Include the ability to add or edit journal entries. When adding or editing a journal entry, 
