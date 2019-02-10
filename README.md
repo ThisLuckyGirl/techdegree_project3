@@ -1,5 +1,5 @@
 # techdegree_project3
-Unit 3 project for TalentPath
+Unit 3 project for TalentPath PHP cohort
 
 Create a local web interface of a learning journal. The main (index) page will list journal entry titles and dates. 
 Each journal entry title will link to a detail page that displays the title, date, time spent, what you learned, and 
